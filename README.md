@@ -5,6 +5,7 @@ Official Python SDK for iLoveVideoEditor — render videos programmatically with
 iLoveVideoEditor is a cloud video rendering API: submit a JSON scene description (VideoJSON) or a template, queue a render, and download the resulting MP4/WebM. This SDK is the official Python client — it ships a high-level client with polling and progress callbacks on top of a fully typed, auto-generated OpenAPI client covering every API resource.
 
 [![PyPI version](https://img.shields.io/pypi/v/ilovevideoeditor-sdk.svg)](https://pypi.org/project/ilovevideoeditor-sdk/) [![Python versions](https://img.shields.io/pypi/pyversions/ilovevideoeditor-sdk.svg)](https://pypi.org/project/ilovevideoeditor-sdk/) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Docs](https://img.shields.io/badge/docs-ilovevideoeditor.com-blue)](https://ilovevideoeditor.com/docs/sdks)
+- API reference: [OpenAPI spec](https://ilovevideoeditor.com/docs/api/openapi.yaml) · [Postman collection](https://ilovevideoeditor.com/docs/api/postman-collection.json)
 
 ## Features
 
