@@ -37,11 +37,25 @@ class iLoveVideoEditorClient:
         self._render = RenderApi(self._api_client)
         self._templates = TemplatesApi(self._api_client)
 
+    @staticmethod
+    def _progress_percent(progress) -> float:
+        """Normalize the API progress payload to a percent number.
+
+        The API returns progress as an object ({done, total, percent});
+        older jobs may return a bare number or nothing at all.
+        """
+        if progress is None:
+            return 0.0
+        if isinstance(progress, (int, float)):
+            return float(progress)
+        percent = getattr(progress, "percent", None)
+        return float(percent) if percent is not None else 0.0
+
     def _to_result(self, status: RenderJob) -> "RenderResult":
         return RenderResult(
             job_id=str(status.job_id),
             status=status.status,
-            progress=float(status.progress),
+            progress=self._progress_percent(status.progress),
             url=status.url,
             error=status.error,
             created_at=status.created_at,
@@ -84,14 +98,14 @@ class iLoveVideoEditorClient:
         while time.monotonic() < deadline:
             status = self._render.get_render_status(job_id)
             if on_progress:
-                on_progress(status.status, float(status.progress))
+                on_progress(status.status, self._progress_percent(status.progress))
 
             if status.status == "completed":
                 refresh = self._render.refresh_render_url(job_id)
                 return RenderResult(
                     job_id=job_id,
                     status=status.status,
-                    progress=float(status.progress),
+                    progress=self._progress_percent(status.progress),
                     url=status.url,
                     download_url=refresh.download_url,
                     error=status.error,
