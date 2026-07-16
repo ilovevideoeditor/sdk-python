@@ -34,7 +34,7 @@ class WorkflowRun(BaseModel):
     workspace_id: UUID = Field(alias="workspaceId")
     triggered_by: Optional[UUID] = Field(default=None, alias="triggeredBy")
     trigger: StrictStr
-    status: StrictStr
+    status: StrictStr = Field(description="`queued` → `running` → `completed` / `failed` / `cancelled`. A run with a human-in-the-loop `review` step pauses in `waiting_review` until the step is approved or rejected via `/v1/workflows/runs/{runId}/steps/{stepId}/review`.")
     variables: Dict[str, Any]
     estimated_cost: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="estimatedCost")
     total_cost: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, alias="totalCost")

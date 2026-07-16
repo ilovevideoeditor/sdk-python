@@ -37,8 +37,8 @@ class WorkflowStep(BaseModel):
     @field_validator('type')
     def type_validate_enum(cls, value):
         """Validates the enum"""
-        if value not in set(['upload_asset', 'crawl_url', 'discover_variables', 'render_template', 'render_videojson', 'apply_tool', 'send_to_destination']):
-            raise ValueError("must be one of enum values ('upload_asset', 'crawl_url', 'discover_variables', 'render_template', 'render_videojson', 'apply_tool', 'send_to_destination')")
+        if value not in set(['upload_asset', 'crawl_url', 'discover_variables', 'render_template', 'render_videojson', 'apply_tool', 'review', 'send_to_destination']):
+            raise ValueError("must be one of enum values ('upload_asset', 'crawl_url', 'discover_variables', 'render_template', 'render_videojson', 'apply_tool', 'review', 'send_to_destination')")
         return value
 
     model_config = ConfigDict(

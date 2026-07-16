@@ -38,7 +38,7 @@ class iLoveVideoEditorClient:
         self._templates = TemplatesApi(self._api_client)
 
     @staticmethod
-    def _progress_percent(progress: object) -> float:
+    def _progress_percent(progress) -> float:
         """Normalize the API progress payload to a percent number.
 
         The API returns progress as an object ({done, total, percent});

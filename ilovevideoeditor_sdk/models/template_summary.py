@@ -33,15 +33,23 @@ class TemplateSummary(BaseModel):
     platform: StrictStr
     accent_color: StrictStr = Field(alias="accentColor")
     icon: StrictStr
+    mode: StrictStr
     tool_id: Optional[StrictStr] = Field(default=None, alias="toolId")
     variables_schema: Optional[List[Dict[str, Any]]] = Field(default=None, alias="variablesSchema")
-    __properties: ClassVar[List[str]] = ["id", "name", "description", "platform", "accentColor", "icon", "toolId", "variablesSchema"]
+    __properties: ClassVar[List[str]] = ["id", "name", "description", "platform", "accentColor", "icon", "mode", "toolId", "variablesSchema"]
 
     @field_validator('platform')
     def platform_validate_enum(cls, value):
         """Validates the enum"""
         if value not in set(['youtube', 'tiktok', 'instagram', 'general']):
             raise ValueError("must be one of enum values ('youtube', 'tiktok', 'instagram', 'general')")
+        return value
+
+    @field_validator('mode')
+    def mode_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['preset', 'project']):
+            raise ValueError("must be one of enum values ('preset', 'project')")
         return value
 
     model_config = ConfigDict(
@@ -106,6 +114,7 @@ class TemplateSummary(BaseModel):
             "platform": obj.get("platform"),
             "accentColor": obj.get("accentColor"),
             "icon": obj.get("icon"),
+            "mode": obj.get("mode"),
             "toolId": obj.get("toolId"),
             "variablesSchema": obj.get("variablesSchema")
         })

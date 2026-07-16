@@ -35,7 +35,7 @@ class WorkflowRunStep(BaseModel):
     step_type: StrictStr = Field(alias="stepType")
     name: Optional[StrictStr] = None
     config: Optional[Dict[str, Any]] = None
-    status: Optional[StrictStr] = None
+    status: Optional[StrictStr] = Field(default=None, description="`pending` → `running` → `completed` / `failed` / `skipped`. A `review` step waits in `waiting` for a human decision; the run is in `waiting_review` while any step is waiting.")
     input_url: Optional[StrictStr] = Field(default=None, alias="inputUrl")
     output_url: Optional[StrictStr] = Field(default=None, alias="outputUrl")
     output_key: Optional[StrictStr] = Field(default=None, alias="outputKey")

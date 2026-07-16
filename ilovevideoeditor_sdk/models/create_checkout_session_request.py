@@ -17,8 +17,8 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
-from typing import Any, ClassVar, Dict, List, Optional
+from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt, StrictStr, field_validator
+from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
 from typing_extensions import Self
 from pydantic_core import to_jsonable_python
@@ -31,7 +31,8 @@ class CreateCheckoutSessionRequest(BaseModel):
     tier_id: Optional[StrictStr] = Field(default=None, alias="tierId")
     mode: Optional[StrictStr] = None
     credits: Optional[StrictInt] = None
-    __properties: ClassVar[List[str]] = ["productId", "tierId", "mode", "credits"]
+    amount_eur: Optional[Union[StrictFloat, StrictInt]] = Field(default=None, description="Custom credit top-up amount in EUR (`mode=payment` only). Between 10 and 2500, at most 2 decimal places. When set, the pay-what-you-want credits product is used and any `productId` is ignored.", alias="amountEur")
+    __properties: ClassVar[List[str]] = ["productId", "tierId", "mode", "credits", "amountEur"]
 
     @field_validator('tier_id')
     def tier_id_validate_enum(cls, value):
@@ -107,7 +108,8 @@ class CreateCheckoutSessionRequest(BaseModel):
             "productId": obj.get("productId"),
             "tierId": obj.get("tierId"),
             "mode": obj.get("mode"),
-            "credits": obj.get("credits")
+            "credits": obj.get("credits"),
+            "amountEur": obj.get("amountEur")
         })
         return _obj
 

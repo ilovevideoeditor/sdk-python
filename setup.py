@@ -6,7 +6,7 @@ README = (Path(__file__).parent / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="ilovevideoeditor-sdk",
-    version="1.0.1",
+    version="1.0.2",
     description=(
         "Official Python SDK for the iLoveVideoEditor cloud video rendering API "
         "— render videos programmatically from JSON scene descriptions and templates"

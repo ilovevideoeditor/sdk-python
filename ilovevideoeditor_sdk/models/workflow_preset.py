@@ -17,23 +17,35 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
 from ilovevideoeditor_sdk.models.workflow_definition import WorkflowDefinition
 from typing import Optional, Set
 from typing_extensions import Self
 from pydantic_core import to_jsonable_python
 
-class CreateWorkflowRequest(BaseModel):
+class WorkflowPreset(BaseModel):
     """
-    CreateWorkflowRequest
+    WorkflowPreset
     """ # noqa: E501
+    id: StrictStr
     name: StrictStr
-    description: Optional[StrictStr] = None
+    description: StrictStr
+    category: StrictStr
+    roles: List[StrictStr] = Field(description="Onboarding roles this preset is recommended for.")
+    goals: List[StrictStr] = Field(description="Onboarding goals this preset is recommended for.")
+    channels: List[StrictStr] = Field(description="Onboarding channels this preset is recommended for.")
+    poster_template_id: Optional[StrictStr] = Field(default=None, description="Toolkit template id whose poster image represents this preset.", alias="posterTemplateId")
+    estimated_credits: StrictInt = Field(description="Approximate credits consumed per run.", alias="estimatedCredits")
     definition: WorkflowDefinition
-    is_active: Optional[StrictBool] = Field(default=None, alias="isActive")
-    source_preset_id: Optional[StrictStr] = Field(default=None, description="Optional id of a system preset from /v1/workflows/presets this workflow is imported from.", alias="sourcePresetId")
-    __properties: ClassVar[List[str]] = ["name", "description", "definition", "isActive", "sourcePresetId"]
+    __properties: ClassVar[List[str]] = ["id", "name", "description", "category", "roles", "goals", "channels", "posterTemplateId", "estimatedCredits", "definition"]
+
+    @field_validator('category')
+    def category_validate_enum(cls, value):
+        """Validates the enum"""
+        if value not in set(['getting-started', 'social', 'promo', 'real_estate', 'travel', 'events', 'news', 'beauty', 'automotive', 'business']):
+            raise ValueError("must be one of enum values ('getting-started', 'social', 'promo', 'real_estate', 'travel', 'events', 'news', 'beauty', 'automotive', 'business')")
+        return value
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -53,7 +65,7 @@ class CreateWorkflowRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CreateWorkflowRequest from a JSON string"""
+        """Create an instance of WorkflowPreset from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -77,11 +89,16 @@ class CreateWorkflowRequest(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of definition
         if self.definition:
             _dict['definition'] = self.definition.to_dict()
+        # set to None if poster_template_id (nullable) is None
+        # and model_fields_set contains the field
+        if self.poster_template_id is None and "poster_template_id" in self.model_fields_set:
+            _dict['posterTemplateId'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CreateWorkflowRequest from a dict"""
+        """Create an instance of WorkflowPreset from a dict"""
         if obj is None:
             return None
 
@@ -89,11 +106,16 @@ class CreateWorkflowRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "id": obj.get("id"),
             "name": obj.get("name"),
             "description": obj.get("description"),
-            "definition": WorkflowDefinition.from_dict(obj["definition"]) if obj.get("definition") is not None else None,
-            "isActive": obj.get("isActive"),
-            "sourcePresetId": obj.get("sourcePresetId")
+            "category": obj.get("category"),
+            "roles": obj.get("roles"),
+            "goals": obj.get("goals"),
+            "channels": obj.get("channels"),
+            "posterTemplateId": obj.get("posterTemplateId"),
+            "estimatedCredits": obj.get("estimatedCredits"),
+            "definition": WorkflowDefinition.from_dict(obj["definition"]) if obj.get("definition") is not None else None
         })
         return _obj
 

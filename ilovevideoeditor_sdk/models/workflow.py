@@ -37,9 +37,10 @@ class Workflow(BaseModel):
     description: Optional[StrictStr] = None
     definition: WorkflowDefinition
     is_active: StrictBool = Field(alias="isActive")
+    source_preset_id: Optional[StrictStr] = Field(default=None, description="Id of the system preset this workflow was imported from (null when built from scratch).", alias="sourcePresetId")
     created_at: datetime = Field(alias="createdAt")
     updated_at: datetime = Field(alias="updatedAt")
-    __properties: ClassVar[List[str]] = ["id", "workspaceId", "createdBy", "name", "description", "definition", "isActive", "createdAt", "updatedAt"]
+    __properties: ClassVar[List[str]] = ["id", "workspaceId", "createdBy", "name", "description", "definition", "isActive", "sourcePresetId", "createdAt", "updatedAt"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -88,6 +89,11 @@ class Workflow(BaseModel):
         if self.description is None and "description" in self.model_fields_set:
             _dict['description'] = None
 
+        # set to None if source_preset_id (nullable) is None
+        # and model_fields_set contains the field
+        if self.source_preset_id is None and "source_preset_id" in self.model_fields_set:
+            _dict['sourcePresetId'] = None
+
         return _dict
 
     @classmethod
@@ -107,6 +113,7 @@ class Workflow(BaseModel):
             "description": obj.get("description"),
             "definition": WorkflowDefinition.from_dict(obj["definition"]) if obj.get("definition") is not None else None,
             "isActive": obj.get("isActive"),
+            "sourcePresetId": obj.get("sourcePresetId"),
             "createdAt": obj.get("createdAt"),
             "updatedAt": obj.get("updatedAt")
         })

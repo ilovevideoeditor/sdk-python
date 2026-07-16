@@ -17,23 +17,19 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
-from typing import Any, ClassVar, Dict, List, Optional
-from ilovevideoeditor_sdk.models.workflow_definition import WorkflowDefinition
+from pydantic import BaseModel, ConfigDict
+from typing import Any, ClassVar, Dict, List
+from ilovevideoeditor_sdk.models.workflow_preset import WorkflowPreset
 from typing import Optional, Set
 from typing_extensions import Self
 from pydantic_core import to_jsonable_python
 
-class CreateWorkflowRequest(BaseModel):
+class ListWorkflowPresets200Response(BaseModel):
     """
-    CreateWorkflowRequest
+    ListWorkflowPresets200Response
     """ # noqa: E501
-    name: StrictStr
-    description: Optional[StrictStr] = None
-    definition: WorkflowDefinition
-    is_active: Optional[StrictBool] = Field(default=None, alias="isActive")
-    source_preset_id: Optional[StrictStr] = Field(default=None, description="Optional id of a system preset from /v1/workflows/presets this workflow is imported from.", alias="sourcePresetId")
-    __properties: ClassVar[List[str]] = ["name", "description", "definition", "isActive", "sourcePresetId"]
+    presets: List[WorkflowPreset]
+    __properties: ClassVar[List[str]] = ["presets"]
 
     model_config = ConfigDict(
         validate_by_name=True,
@@ -53,7 +49,7 @@ class CreateWorkflowRequest(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of CreateWorkflowRequest from a JSON string"""
+        """Create an instance of ListWorkflowPresets200Response from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -74,14 +70,18 @@ class CreateWorkflowRequest(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of definition
-        if self.definition:
-            _dict['definition'] = self.definition.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in presets (list)
+        _items = []
+        if self.presets:
+            for _item_presets in self.presets:
+                if _item_presets:
+                    _items.append(_item_presets.to_dict())
+            _dict['presets'] = _items
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of CreateWorkflowRequest from a dict"""
+        """Create an instance of ListWorkflowPresets200Response from a dict"""
         if obj is None:
             return None
 
@@ -89,11 +89,7 @@ class CreateWorkflowRequest(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "name": obj.get("name"),
-            "description": obj.get("description"),
-            "definition": WorkflowDefinition.from_dict(obj["definition"]) if obj.get("definition") is not None else None,
-            "isActive": obj.get("isActive"),
-            "sourcePresetId": obj.get("sourcePresetId")
+            "presets": [WorkflowPreset.from_dict(_item) for _item in obj["presets"]] if obj.get("presets") is not None else None
         })
         return _obj
 
